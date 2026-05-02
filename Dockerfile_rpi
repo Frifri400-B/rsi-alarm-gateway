@@ -1,4 +1,4 @@
-FROM arm32v7/python:3.5-alpine
+FROM python:3.12-alpine
 RUN apk add --no-cache --update gcc g++ make libffi-dev openssl-dev
 WORKDIR /usr/src/app
 EXPOSE 888
@@ -8,4 +8,3 @@ COPY config.json server.py utils.py mqtt.py ./
 ENV LOGLEVEL=INFO
 ENTRYPOINT ["python3"]
 CMD ["server.py"]
-
