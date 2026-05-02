@@ -6,37 +6,6 @@ It's integrated with [Home Assistant](https://github.com/home-assistant/home-ass
 
 <img width="200" alt="portfolio_view" src="image/../images/RSI_alarm_image.png">
 
-# Installation
-## Docker compilation
-```
-docker build -t mickaelh51/rsimqttgateway .
-```
-## Docker run (in test mode)
-```
-docker run --rm -i -t -p 888:888 --name rsigwalarm mickaelh51/rsimqttgateway:latest
-In debug mode:
-docker run --rm -i -t -p 888:888 -e loglevel=DEBUG --name rsigwalarm mickaelh51/rsimqttgateway:latest
-```
-
-## Docker image:
-[https://hub.docker.com/r/mickaelh51/rsimqttgateway](https://hub.docker.com/r/mickaelh51/rsimqttgateway)
-
-### Pull from docker hub
-#### For linux/amd64
-```
-docker pull mickaelh51/rsimqttgateway:latest
-```
-
-#### For Raspberry PI (not tested)
-```
-docker pull mickaelh51/rsimqttgateway:rpi
-```
-
-#### You can mount config.json as volume with
-```
-./config.json:/usr/src/app/config.json
-```
-
 # Alarm configuration
 Please, backup actual configuration before any changes !!
 
@@ -57,10 +26,13 @@ Please, backup actual configuration before any changes !!
   "socket_bind": "",
   "socket_listen_port": 888,
   "socket_timeout" : 5.0,
-  "mqtt_host": "192.168.1.1",
+  "mqtt_host": "192.168.1.72",
+  "mqtt_user": "rsivideofed",
+  "mqtt_pwd": "rsivideofed",
   "mqtt_port": 1883,
   "mqtt_prefix": "homeassistant",
-  "home_assistant_integration": 1, ==> if 1, at startup, the sensors bellow will be created in HA.
+  "home_assistant_integration": 1,
+  "alarm_code": "12345678",
   "home_assistant_sensors":
   {
     "alarm_arm": { "device_class": "lock", "default_state": "ON", "sensor_type": "binary_sensor" },
@@ -69,48 +41,45 @@ Please, backup actual configuration before any changes !!
     "alarm_autoprotection": { "device_class": "safety", "default_state": "OFF", "sensor_type": "binary_sensor" },
     "alarm_autoprotection_source": { "device_class": "None", "default_state": "nothing", "sensor_type": "sensor" },
     "alarm_alert": { "device_class": "problem", "default_state": "OFF", "sensor_type": "binary_sensor" },
-    "alarm_alert_source": { "device_class": "None", "default_state": "nothing", "sensor_type": "sensor" }
+    "alarm_alert_source": { "device_class": "None", "default_state": "nothing", "sensor_type": "sensor" },
+    "alarm_ping": { "device_class": "None", "default_state": "ping", "sensor_type": "sensor" }
   },
   "mapping_events":
   {
     "1": { "type": "alarm_alert", "state": "ON", "comment": "alarm alert !", "device_index": 1  },
     "3": { "type": "alarm_autoprotection", "state": "ON", "comment": "autoprotection !", "device_index": 1  },
     "4": { "type": "alarm_autoprotection", "state": "OFF", "comment": "autoprotection recovery" },
+    "5": { "type": "", "state": "OFF", "comment": "Panic Buttons", "device_index": 1},
     "6": { "type": "alarm_5_wrong_codes", "state": "OFF", "comment": "5 wrong codes" },
+    "7": { "type": "", "state": "OFF", "comment": "disarmed with duress code +1" },
+    "8": { "type": "", "state": "OFF", "comment": "armed with duress code +2" },
     "19": { "type": "alarm_power", "state": "OFF", "comment": "ac power lost" },
     "20": { "type": "alarm_power", "state": "ON", "comment": "ac power recovery" },
     "24": { "type": "alarm_arm", "state": "OFF", "comment": "armed", "mapping_users": 1 },
     "25": { "type": "alarm_arm", "state": "ON", "comment": "disarmed", "mapping_users": 1 },
+    "26": { "type": "alarm_ping", "state": "pong", "comment": "ping / pong" },
     "27": { "type": "alarm_alert", "state": "OFF", "comment": "intrusion ack" }
   },
   "mapping_users":
   {
     "1": "Manon",
     "2": "Mickael",
-    "3": "Allan"
+    "3": "Allan",
+    "100": "Telecomande"
   },
-  "device_index": { ==> detectors
-    "1": { "name" : "Keypad entrance", "zone": 1 },
+  "device_index": {
+    "1": { "name" : "Clavier", "zone": 1 },
     "2": { "name" : "IR entrance", "zone": 1 },
-    "3": { "name" : "Door entrance", "zone": 1 },
+    "3": { "name" : "Baie Vitree", "zone": 1 },
     "4": { "name" : "Indoor siren", "zone": 1 },
     "5": { "name" : "IR stage 1", "zone": 3 },
     "6": { "name" : "Outdoor siren", "zone": 1 },
     "62": { "name" : "Panel", "zone": 2 }
   },
   "zones": {
-    "1": { "name" : "Entrance"},
-    "2": { "name" : "Living room"},
-    "3": { "name" : "Stage 1"},
-    "4": { "name" : "Basement"}
+    "1": { "name" : "Interieur"}
   }
 }
-```
-
-# Test server
-You can send specifics events to test the server. You can find a test script in tests/test_server_python2.py
-```
-python2.7 tests/test_server_python2.py
 ```
 
 # My events list (have to change with your own system)
