@@ -63,7 +63,6 @@ def mqtt_start_server(cfg, command_callback=None):
     client.loop_start()
     return client
 
-
 def mqtt_publish_alarm_state(client, cfg, state):
     logging.info("Alarm state → %s" % state)
     client.publish(ALARM_STATE_TOPIC, state, qos=1, retain=True)
